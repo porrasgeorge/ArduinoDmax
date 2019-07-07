@@ -130,16 +130,17 @@ void loop()
   {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    if (paso == Inicio){
+    if (paso == Inicio){                              //first step
       delay(50);
-      if (!WasherInput){
-        paso = bypassWait;
+      if (!WasherInput){                              //washer press? 
+        paso = bypassWait;                            //go to bypasswait
       }
       else{
         
         EEPROMOnLeftValue = EEPROM.read(OnLeftAddress);
         if (EEPROMOnLeftValue > 0)
         {
+          digitalWrite(IgnRelayPin, activado);      //ignition now
           digitalWrite(ABSRelayPin, desActivado);
           delay(500);
           for (byte val = EEPROMOnLeftValue; val > 0; val--) 
@@ -155,11 +156,10 @@ void loop()
         }
         else
           paso = codigoPresionar;
-//          paso = cinturon;
       }
     }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    else if (paso == cinturon)
+/*
+  else if (paso == cinturon)
     {
       SeatBeltInput = digitalRead(SeatBeltPin);
       if (SeatBeltInput == desActivado){                      // sin cinturon
@@ -173,7 +173,8 @@ void loop()
     }
     
     // Paso 2
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+*/
+
     else if (paso == codigoPresionar)
     {
       if (contador == ABSApagar)                      //APAGAR ABS al iniciar
@@ -317,26 +318,26 @@ void loop()
     }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    else if (paso == bypassWait)
+    else if (paso == bypassWait)                                  //road to bypass ignition
     {
-      if (contador == TimeBypassMin)
-        digitalWrite(ABSRelayPin, desActivado);
-      if (WasherDescendente)
+      if (contador == TimeBypassMin)          
+        digitalWrite(ABSRelayPin, desActivado);                   //turn on indication
+      if (WasherDescendente)                                      //if release
       {
         WasherDescendente = false; 
-        if ((contDescendente > TimeBypassMin) && (contDescendente < TimeBypassMax))
-          paso = bypassCode;
+        if ((contDescendente > TimeBypassMin) && (contDescendente < TimeBypassMax))   //if release in this time
+          paso = bypassCode;                                      //go to bypassCode
         else
-          paso = bypassErase;
+          paso = bypassErase;                                     //go to bypassErase
       }
    }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
    else if (paso == bypassErase)
    {
-      digitalWrite(ABSRelayPin, desActivado);
+      digitalWrite(ABSRelayPin, desActivado);                      
       delay(100);
-      EEPROM.update(OnLeftAddress, 0);
+      EEPROM.update(OnLeftAddress, 0);                            //erase memory
       digitalWrite(ABSRelayPin, activado);
       delay(1000);
       digitalWrite(ABSRelayPin, desActivado);
@@ -347,11 +348,11 @@ void loop()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
    else if (paso == bypassCode)
    {
-      if (WasherDescendente)
+      if (WasherDescendente)                                    //if release
       {
-        WasherDescendente = false; 
-        if (contDescendente < MaxTimeToPressButton)
-          bypassCounter = bypassCounter +1;
+        WasherDescendente = false;                              //clean release
+        if (contDescendente < MaxTimeToPressButton)             //release on time?
+          bypassCounter = bypassCounter +1;                     //add times pressed
       }
 
       if ((contador > MaxTimeToPressButton) && WasherInput)
