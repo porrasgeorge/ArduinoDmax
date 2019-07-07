@@ -154,7 +154,8 @@ void loop()
           paso = ignicion;
         }
         else
-          paso = cinturon;
+          paso = codigoPresionar;
+//          paso = cinturon;
       }
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
