@@ -227,8 +227,13 @@ void loop()
     else if (paso == ignicion)                                      //Reestablecer
     {
       digitalWrite(IgnRelayPin, activado);
-      delay(100); 
+      delay(1000); 
       digitalWrite(IgnRelayPin, desActivado);
+      delay(1000);
+      digitalWrite(IgnRelayPin, activado);
+      delay(1500); 
+      digitalWrite(IgnRelayPin, desActivado); 
+      delay(1000);     
       digitalWrite(WasherRelayPin, desActivado);
       digitalWrite(ABSRelayPin, desActivado);
       paso = WipWasher;
